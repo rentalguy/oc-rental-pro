@@ -1,6 +1,24 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import Image from "next/image";
+import { useSessionContext } from "@supabase/auth-helpers-react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
+export default function Page() {
+  const { session } = useSessionContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!session) {
+      router.replace("/login");
+    }
+  }, [session, router]);
+
+  if (!session) {
+    return null; // loading
+  }
+
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
@@ -50,6 +68,7 @@ export default function Home() {
             Read our docs
           </a>
         </div>
+      <p className="mt-4">Signed in as {session.user.email}</p>
       </main>
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
         <a
